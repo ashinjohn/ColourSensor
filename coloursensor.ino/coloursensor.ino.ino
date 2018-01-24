@@ -6,7 +6,7 @@
 
 */
 
-const int threshold=3;
+const int threshold = 3;
 
 int feedback = false;
 
@@ -25,7 +25,7 @@ int  pblue = blue;
 int  pgreen = green;
 
 
-int Rcount=0, Gcount=0,Bcount=0,Wcount=0;
+int Illcount = 0, Rcount = 0, Gcount = 0, Bcount = 0, Wcount = 0, Ycount = 0;
 
 
 void setup()
@@ -44,137 +44,170 @@ void loop()
   color();
   if (feedback)
   {
-  Serial.print(" R Intensity:");       Serial.print(red, DEC);
-  Serial.print(" G Intensity: ");      Serial.print(green, DEC);
-  Serial.print(" B Intensity : ");     Serial.print(blue, DEC);
+    Serial.print(" R Intensity:");       Serial.print(red, DEC);
+    Serial.print(" G Intensity: ");      Serial.print(green, DEC);
+    Serial.print(" B Intensity : ");     Serial.print(blue, DEC);
   }
-  
+
   Serial.println();
 
   // Removing noise data
   /*
-  Serial.print("  RedD");
-  Serial.print(pred - red);
-  Serial.print("  GreenD");
-  Serial.print(pgreen - green);
-  Serial.print("  BlueD");
-  Serial.print(pblue - blue);
+    Serial.print("  RedD");
+    Serial.print(pred - red);
+    Serial.print("  GreenD");
+    Serial.print(pgreen - green);
+    Serial.print("  BlueD");
+    Serial.print(pblue - blue);
   */
 
-  
-  if (   ( pred - red <= 5 || pred - red <= -5 ) && ( pgreen - green <= 5 || pgreen - green <= -5 ) && ( pblue - blue <= 5 || pblue - blue <= -5 )    ) {
+  if (red > 1000 && green > 1000 && blue > 1000)
+    Illcount += 1;
 
+  else if (   ( pred - red <= 5 || pred - red <= -5 ) && ( pgreen - green <= 5 || pgreen - green <= -5 ) && ( pblue - blue <= 5 || pblue - blue <= -5 )    ) {
+    Illcount = 0;
 
-      if (red < blue && red < green && red <50 && green <70 && blue<60)
+    if (red < blue && red < green && red < 50 && green < 70 && blue < 60)
+    {
+      if (  blue > 25  )
       {
+        if (feedback)
+          Serial.println(" - (Yellow Color)");
+        Ycount += 1;
+        Wcount = 0, Rcount = 0; Gcount = 0; Bcount = 0;
+      }
+      else {
         if (feedback)
           Serial.println(" - (White Color)");
-      Wcount+=1;
-      Rcount=0;Gcount=0;Bcount=0;
+        Wcount += 1;
+        Ycount = 0, Rcount = 0; Gcount = 0; Bcount = 0;
       }
-      else if (red < blue && red < green)
-      {
+
+
+    }
+
+    else if (red < blue && red < green)
+    {
+      if (  green > 50 && blue < 27 ) {
         if (feedback)
           Serial.println(" - (Red Color)");
-      Rcount+=1;
-      Wcount=0;Gcount=0;Bcount=0;
+        Rcount += 2;
+        Ycount = 0, Wcount = 0; Gcount = 0; Bcount = 0;
       }
-
-      else if (blue < red && blue < green)
-      {
-      Bcount+=1;
-      Rcount=0;Gcount=0;Wcount=0;
-      if (feedback)
-        Serial.println(" - (Blue Color)");
-      }
-
-      else if (green < red && green < blue)
-      {
-      Gcount+=1;
-      Wcount=0;Bcount=0;Rcount=0;
-      if (feedback)
-        Serial.println(" - (Green Color)");
-      }
-      else
-      {
+      else if (green < 100) {
+        // less sucess
         if (feedback)
-          Serial.print('\n');
+          Serial.println(" - ( !!! Yellow Color)");
+
+        Ycount += 1;
+        Wcount = 0, Rcount = 0; Gcount = 0; Bcount = 0;
       }
 
-      if ( Wcount>threshold )
-            Serial.println(" - (White Color)");
-      else if ( Rcount>threshold )
-          Serial.println(" - (Red Color)"); 
-      else if ( Gcount>threshold )
-          Serial.println(" - (Green Color)");
-      else if ( Bcount>threshold )
-          Serial.println(" - (Blue Color)");
-      else 
-          Serial.print("\n");
 
-      if ( Rcount>5 || Gcount>5 || Bcount>5 || Wcount>5 )
-          {
-            Rcount=0;
-            Gcount=0;
-            Bcount=0;
-            Wcount=0;
-          }
 
-          
-/*
-      if (red < blue && red < green&& red <20)
-      {
-      Serial.println(" - (Red Color)");
-      }
 
-      else if (red < blue && green < blue)
-      {
-        Serial.println(" - (Yellow Color)");
-      }
-      else if (red < blue && red < green && red < 100 && blue < 100 )
-      {
-        Serial.println(" - (Dark yellow Color)");
-      }
-      
-      if (blue < red && blue < green)
-      {
+    }
+
+    else if (blue < red && blue < green)
+    {
+      Bcount += 1;
+      Ycount = 0, Rcount = 0; Gcount = 0; Wcount = 0;
+      if (feedback)
         Serial.println(" - (Blue Color)");
-      }
-      if (green < red && green < blue)
-      {
+    }
+
+    else if (green < red && green < blue)
+    {
+      Gcount += 1;
+      Ycount = 0, Wcount = 0; Bcount = 0; Rcount = 0;
+      if (feedback)
         Serial.println(" - (Green Color)");
-      }
-*/
     }
     else
     {
       if (feedback)
-      Serial.println(" - (Noise Data)");
+        Serial.print('\n');
+    }
+
+    if ( Wcount > threshold )
+      Serial.println("                          Final Result :- White Color");
+    else if ( Rcount > threshold )
+      Serial.println("                          Final Result :- Red Color");
+    else if ( Gcount > threshold )
+      Serial.println("                          Final Result :-  Green Color");
+    else if ( Bcount > threshold )
+      Serial.println("                          Final Result :-  Blue Color");
+    else if ( Ycount > threshold )
+      Serial.println("                          Final Result :-  Yellow Color");
+    else
+      Serial.print("\n");
+
+    if ( Rcount > 5 || Gcount > 5 || Bcount > 5 || Wcount > 5 || Ycount > 5 )
+    {
+      Rcount = 0;
+      Gcount = 0;
+      Bcount = 0;
+      Wcount = 0;
+      Ycount = 0;
     }
 
 
+    /*
+          if (red < blue && red < green&& red <20)
+          {
+          Serial.println(" - (Red Color)");
+          }
 
-    // storing data from last loop onto previous variables
-    pred = red;
-    pblue = blue;
-    pgreen = green;
+          else if (red < blue && green < blue)
+          {
+            Serial.println(" - (Yellow Color)");
+          }
+          else if (red < blue && red < green && red < 100 && blue < 100 )
+          {
+            Serial.println(" - (Dark yellow Color)");
+          }
 
-
-    delay(300);
+          if (blue < red && blue < green)
+          {
+            Serial.println(" - (Blue Color)");
+          }
+          if (green < red && green < blue)
+          {
+            Serial.println(" - (Green Color)");
+          }
+    */
   }
-  void color()
+  else
   {
-    digitalWrite(s2, LOW);
-    digitalWrite(s3, LOW);
-    //count OUT, pRed, RED
-    delay(10);
-    red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
-    digitalWrite(s3, HIGH);
-    delay(10);
-    //count OUT, pBLUE, BLUE
-    blue = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
-    digitalWrite(s2, HIGH);
-    //count OUT, pGreen, GREEN
-    delay(10);
-    green = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+    if (feedback)
+      Serial.println(" - (Noise Data)");
   }
+
+
+
+  // storing data from last loop onto previous variables
+  pred = red;
+  pblue = blue;
+  pgreen = green;
+
+  if ( Illcount > 3 )
+    Serial.println("                          No Illumination");
+
+  delay(300);
+}
+void color()
+{
+  digitalWrite(s2, LOW);
+  digitalWrite(s3, LOW);
+  //count OUT, pRed, RED
+  delay(10);
+  red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+  digitalWrite(s3, HIGH);
+  delay(10);
+  //count OUT, pBLUE, BLUE
+  blue = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+  digitalWrite(s2, HIGH);
+  //count OUT, pGreen, GREEN
+  delay(10);
+  green = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+}
