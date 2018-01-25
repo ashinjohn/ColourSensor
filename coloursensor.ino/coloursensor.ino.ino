@@ -8,7 +8,7 @@
 
 const int threshold = 3;
 
-int feedback = false;
+int feedback = true;
 
 const int s0 = 3;
 const int s1 = 4;
@@ -67,8 +67,51 @@ void loop()
   else if (   ( pred - red <= 5 || pred - red <= -5 ) && ( pgreen - green <= 5 || pgreen - green <= -5 ) && ( pblue - blue <= 5 || pblue - blue <= -5 )    ) {
     Illcount = 0;
 
-    if (red < blue && red < green && red < 50 && green < 70 && blue < 60)
+    if (red < blue && red < green)
+    {/*
+      if (  green > 20 && blue < 27 ) {
+        if (feedback)
+          Serial.println(" - (Red Color)");
+        Rcount += 2;
+        Ycount = 0, Wcount = 0; Gcount = 0; Bcount = 0;
+      }
+     else if (green < 100) {
+        // less sucess
+        if (feedback)
+          Serial.println(" - ( !!! Yellow Color)");
+
+        Ycount += 2;
+        Wcount = 0, Rcount = 0; Gcount = 0; Bcount = 0;
+    */
+                    if (  green > (6*red) && blue > (1.5*red)  ) {
+                      if (feedback)
+                        Serial.println(" - (Red Color)");
+                      Rcount += 1;
+                      Ycount = 0, Wcount = 0; Gcount = 0; Bcount = 0;
+                    }
+    
+                   else if (  green > (1.5*red) && blue > (3*red) ) {
+                      if (feedback)
+                        Serial.println(" - ( !!! Yellow Color)");
+              
+                      Ycount += 2;
+                      Wcount = 0, Rcount = 0; Gcount = 0; Bcount = 0;
+                    }
+
+                else if ( green >(1.5*red) && blue >(1.5*red)   ){
+                      if (feedback)
+                          Serial.println(" - (White Color)");
+                     Wcount += 1;
+                     Ycount = 0, Rcount = 0; Gcount = 0; Bcount = 0;
+    }
+                  
+
+    }
+
+
+   else if (red < blue && red < green && red < 50 && green < 70 && blue < 60)
     {
+      /*
       if (  blue > 25  )
       {
         if (feedback)
@@ -82,31 +125,26 @@ void loop()
         Wcount += 1;
         Ycount = 0, Rcount = 0; Gcount = 0; Bcount = 0;
       }
-
-
-    }
-
-    else if (red < blue && red < green)
-    {
-      if (  green > 50 && blue < 27 ) {
+      */
+     if ( green >(1.5*red) && blue >(3*red)   ){
         if (feedback)
-          Serial.println(" - (Red Color)");
-        Rcount += 2;
-        Ycount = 0, Wcount = 0; Gcount = 0; Bcount = 0;
-      }
-      else if (green < 100) {
-        // less sucess
-        if (feedback)
-          Serial.println(" - ( !!! Yellow Color)");
-
+          Serial.println(" - (Yellow Color)");
         Ycount += 1;
         Wcount = 0, Rcount = 0; Gcount = 0; Bcount = 0;
-      }
+    } 
+    else if ( green >(1.5*red) && blue >(1.5*red)   ){
+        if (feedback)
+          Serial.println(" - (White Color)");
+        Wcount += 1;
+        Ycount = 0, Rcount = 0; Gcount = 0; Bcount = 0;
+    }
 
-
+      
 
 
     }
+
+
 
     else if (blue < red && blue < green)
     {
