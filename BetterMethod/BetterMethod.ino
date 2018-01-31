@@ -32,10 +32,19 @@ void loop()
   LDR = analogRead(A0);
   LDR = map(LDR, 0, 1023, 0, 9);
   Serial.print("B:");
-  Serial.println(LDR);
+  Serial.print(LDR);
+  Serial.print(" ");
 
   colSens.getRGB (RGBvalue);
   //colSens.getRGBtoMaxCorrection (RGBvalue);
+
+/*
+  Serial.print(RGBvalue[0]);
+  Serial.print(",");
+  Serial.print(RGBvalue[1]);
+  Serial.print(",");
+  Serial.println(RGBvalue[2]);
+*/
 
   if (feedback == true) {
     Serial.print("\tR:\t"); Serial.print(RGBvalue[0]);
